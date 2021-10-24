@@ -1,0 +1,49 @@
+@using Microsoft.EntityFrameworkCore;
+@using System.Data.Common;
+@using System.Data;
+@inject AppDbContext appDbContext
+
+@{
+    ViewData["Title"] = "Database info";
+    DbConnection connect = appDbContext.Database.GetDbConnection();
+    string dbName = connect.Database;
+    bool can_connect = appDbContext.Database.CanConnect();
+    List<string> migrationPenging = appDbContext.Database.GetPendingMigrations().ToList();
+    List<string> migrationApplied = appDbContext.Database.GetAppliedMigrations().ToList();
+}
+<partial name="_AlertMessage"/>
+<h1>Information about database</h1>
+<p>Database : @dbName</p>
+<p>Source : @connect.DataSource</p>
+<p>Status : @connect.State</p>
+<hr>
+<h2>Migrations</h2>
+@foreach (var migration in migrationApplied)
+{
+    <p>@migration</p>
+}
+@foreach (var migration in migrationPenging)
+{
+    <p>@migration (Pending)</p>
+}
+@if (migrationPenging.Any())
+{
+    <form method="POST" asp-action="Migrate">
+        <button class="btn btn-success">Create database (Update database)</button>
+    </form>
+    
+}
+<hr>
+@if (can_connect == false)
+{
+    <p class="alert alert-danger">Cannot connect database</p>
+}else{
+    <h2>Tables in database</h2>
+    await appDbContext.Database.OpenConnectionAsync();
+    DataTable table = appDbContext.Database.GetDbConnection().GetSchema("Tables");
+    @foreach (DataRow row in table.Rows)
+    {
+        <p>@row["Table_name"]</p>
+    }
+    <a class="btn btn-danger" asp-action="DeleteDb">Delete database : @(dbName)</a>
+}
