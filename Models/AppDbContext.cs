@@ -33,6 +33,8 @@ namespace App.Models
 
         }
 
+        public DbSet<Contact> Contacts {set ; get;}
+        
         
     }
 }

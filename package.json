@@ -1,0 +1,22 @@
+{
+  "name": "mcv_app",
+  "version": "1.0.0",
+  "description": "scss to css",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tannvv/app_mvc.git"
+  },
+  "keywords": [
+    "scss"
+  ],
+  "author": "Tan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tannvv/app_mvc/issues"
+  },
+  "homepage": "https://github.com/tannvv/app_mvc#readme"
+}
