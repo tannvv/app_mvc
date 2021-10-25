@@ -8,20 +8,27 @@ using Microsoft.EntityFrameworkCore;
 using App.Models;
 using ContactModel = App.Models.Contact;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using App.Data;
 
 namespace App.Areas.Contact.Controllers
 {
     [Area("Contact")]
+    [Authorize(Roles = RoleName.Administrator)]
     public class ContactManageController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         [TempData]
         public string StatusMessage {set;get;}
 
-        public ContactManageController(AppDbContext context)
+        public ContactManageController(AppDbContext context, UserManager<AppUser> userManager,RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Contact  
@@ -146,5 +153,7 @@ namespace App.Areas.Contact.Controllers
         {
             return _context.Contacts.Any(e => e.ID == id);
         }
+
+       
     }
 }

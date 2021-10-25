@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using App.Data;
 using App.Extend;
 using App.Models;
 using App.Service;
+using App.Services;
+using MailKit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +35,11 @@ namespace App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            var mailSettings = Configuration.GetSection("MailSettings");
+            services.Configure<MailSettings>(mailSettings);
+            services.AddSingleton<IEmailSender,SendMailService>();
+
             services.AddControllersWithViews();
             services.AddSingleton<ProductService>();
             services.AddSingleton<PlanetService>();
@@ -40,6 +48,7 @@ namespace App
                 string connectString = Configuration.GetConnectionString("MyBlogContext");
                 options.UseSqlServer(connectString);
             });
+            
 
             // Đăng ký các dịch vụ của Identity
             services.AddIdentity<AppUser, IdentityRole>()
@@ -83,6 +92,14 @@ namespace App
                     // .AddTwitter()
                     // .AddMicrosoftAccount()
                     ;
+                services.AddSingleton<IdentityErrorDescriber,AppIdentityErrorDescriber>();
+                // quyền là admin thì mới hiện lên partial "manage"
+                services.AddAuthorization(options =>{
+                    options.AddPolicy("ViewManageMenu", builder => {
+                        builder.RequireAuthenticatedUser();
+                        builder.RequireRole(RoleName.Administrator);
+                    });
+                });
 
         }
 
