@@ -1,3 +1,4 @@
+using App.Models.Blog;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,10 +31,15 @@ namespace App.Models
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
+            // tạo chỉ mục
+            modelBuilder.Entity<Category>(entity =>{
+                entity.HasIndex(c => c.Slug);
+            });
 
         }
 
         public DbSet<Contact> Contacts {set ; get;}
+        public DbSet<Category> Categories {set;get;}
         
         
     }
